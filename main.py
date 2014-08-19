@@ -66,55 +66,55 @@ for msg in consumer:
                 if level >= 3:
                     daily_data['daily_essence_clicks'] += 1
 
-        # 类别列表点击
-        if url.startswith('/api/1/discovery/list') and url.find('start=5') < 0:
+        # # 类别列表点击
+        # if url.startswith('/api/1/discovery/list') and url.find('start=5') < 0:
 
-            if date_key not in list_oid_click_data:
-                list_oid_click_data[date_key] = {}
+        #     if date_key not in list_oid_click_data:
+        #         list_oid_click_data[date_key] = {}
 
-            result = re.search(list_category_oid_regex, url)
-            if not result: result = re.search(list_newest_oid_regex, url)
-            if result:
-                oid = result.group(1)
+        #     result = re.search(list_category_oid_regex, url)
+        #     if not result: result = re.search(list_newest_oid_regex, url)
+        #     if result:
+        #         oid = result.group(1)
 
-                list_oid_daily_data = list_oid_click_data[date_key]
+        #         list_oid_daily_data = list_oid_click_data[date_key]
 
-                if oid not in list_oid_daily_data:
-                    list_oid_daily_data[oid] = 0
+        #         if oid not in list_oid_daily_data:
+        #             list_oid_daily_data[oid] = 0
 
-                list_oid_daily_data[oid] += 1
+        #         list_oid_daily_data[oid] += 1
 
-        # 专题页点击
-        if url.startswith('/event/page/'):
-            if date_key not in event_page_click_data:
-                event_page_click_data[date_key] = {}
+        # # 专题页点击
+        # if url.startswith('/event/page/'):
+        #     if date_key not in event_page_click_data:
+        #         event_page_click_data[date_key] = {}
 
-            daily_data = event_page_click_data[date_key]
-            # print url
-            result = re.search(event_page_id_regex, url)
-            if result:
-                oid = result.group(1)
-                if oid not in daily_data:
-                    daily_data[oid] = 1
-                else:
-                    daily_data[oid] += 1 
+        #     daily_data = event_page_click_data[date_key]
+        #     # print url
+        #     result = re.search(event_page_id_regex, url)
+        #     if result:
+        #         oid = result.group(1)
+        #         if oid not in daily_data:
+        #             daily_data[oid] = 1
+        #         else:
+        #             daily_data[oid] += 1 
 
-                ppid_result = re.search(ppid_regex, url)
-                if ppid_result:
-                    event_page_oid = oid
+        #         ppid_result = re.search(ppid_regex, url)
+        #         if ppid_result:
+        #             event_page_oid = oid
 
-                    ppid = ppid_result.group(1)
-                    ppid = ppid_decrypt(ppid)
+        #             ppid = ppid_result.group(1)
+        #             ppid = ppid_decrypt(ppid)
 
-                    fpid = ppid[0:32]
+        #             fpid = ppid[0:32]
 
-                    if fpid != INIT_PPID:
-                        if event_page_oid not in event_page_fpid_data:
-                            event_page_fpid_data[event_page_oid] = {}
+        #             if fpid != INIT_PPID:
+        #                 if event_page_oid not in event_page_fpid_data:
+        #                     event_page_fpid_data[event_page_oid] = {}
 
-                        event_page_item_data = event_page_fpid_data[event_page_oid]
-                        if fpid not in event_page_item_data:
-                            event_page_item_data[fpid] = 1
+        #                 event_page_item_data = event_page_fpid_data[event_page_oid]
+        #                 if fpid not in event_page_item_data:
+        #                     event_page_item_data[fpid] = 1
 
 
         # 判断是否达到分页值，进行提交
@@ -140,74 +140,74 @@ for msg in consumer:
 
             discovery_click_data = {}
 
-            # 提交类别列表点击数
-            print list_oid_click_data
-            for current_key in list_oid_click_data:
-                list_oid_daily_data = list_oid_click_data[current_key]
+            # # 提交类别列表点击数
+            # print list_oid_click_data
+            # for current_key in list_oid_click_data:
+            #     list_oid_daily_data = list_oid_click_data[current_key]
 
-                current_time = parse_key_time(current_key)
+            #     current_time = parse_key_time(current_key)
 
-                for oid_key in list_oid_daily_data:
-                    current_data = analysis_db.list_oid_json.find_one({'key': current_key, 'oid': oid_key})
+            #     for oid_key in list_oid_daily_data:
+            #         current_data = analysis_db.list_oid_json.find_one({'key': current_key, 'oid': oid_key})
 
-                    if not current_data:
-                        current_data = {
-                            'key': current_key,
-                            'time': current_time,
-                            'oid': oid_key,
-                            'count': list_oid_daily_data[oid_key]
-                        }
-                        # analysis_db.list_oid_json.insert(current_data)
-                    else:
-                        current_data['count'] += list_oid_daily_data[oid_key]
-                        # analysis_db.list_oid_json.update({'key': current_key}, current_data)
-            list_oid_click_data = {}
+            #         if not current_data:
+            #             current_data = {
+            #                 'key': current_key,
+            #                 'time': current_time,
+            #                 'oid': oid_key,
+            #                 'count': list_oid_daily_data[oid_key]
+            #             }
+            #             # analysis_db.list_oid_json.insert(current_data)
+            #         else:
+            #             current_data['count'] += list_oid_daily_data[oid_key]
+            #             # analysis_db.list_oid_json.update({'key': current_key}, current_data)
+            # list_oid_click_data = {}
 
-            # 提交专题页点击数
-            print event_page_click_data
-            for current_key in event_page_click_data:
-                data_current = event_page_click_data[current_key]
+            # # 提交专题页点击数
+            # print event_page_click_data
+            # for current_key in event_page_click_data:
+            #     data_current = event_page_click_data[current_key]
 
-                for event_page_id in data_current:
-                    print event_page_id, data_current[event_page_id]
-                    # try:
-                    #     mongo_db.event_page.update({'_id':ObjectId(event_page_id)}, {'$inc': {'click': data_current[event_page_id]}})
-                    # except Exception, e:
-                    #     print e
+            #     for event_page_id in data_current:
+            #         print event_page_id, data_current[event_page_id]
+            #         # try:
+            #         #     mongo_db.event_page.update({'_id':ObjectId(event_page_id)}, {'$inc': {'click': data_current[event_page_id]}})
+            #         # except Exception, e:
+            #         #     print e
 
-            event_page_click_data = {}
+            # event_page_click_data = {}
 
-            print event_page_fpid_data
-            # 提交专题页微信分享数
-            for oid in event_page_fpid_data:
-                temp_fpid_dict = event_page_fpid_data[oid]
-                need_to_add_fpid_list = []
+            # print event_page_fpid_data
+            # # 提交专题页微信分享数
+            # for oid in event_page_fpid_data:
+            #     temp_fpid_dict = event_page_fpid_data[oid]
+            #     need_to_add_fpid_list = []
 
-                fpid_list = list(temp_fpid_dict)
+            #     fpid_list = list(temp_fpid_dict)
 
-                event_page_oid = 'event_page.%s' % oid
+            #     event_page_oid = 'event_page.%s' % oid
 
-                exists_fpid_records = mongo_db.fpid_record.find({'oid': event_page_oid, 'fpid': {'$in':fpid_list }}, {'fpid': 1})
-                exists_fpid_dict = {}
+            #     exists_fpid_records = mongo_db.fpid_record.find({'oid': event_page_oid, 'fpid': {'$in':fpid_list }}, {'fpid': 1})
+            #     exists_fpid_dict = {}
 
-                for record in exists_fpid_records:
-                    exists_fpid_dict[record['fpid']] = 1
+            #     for record in exists_fpid_records:
+            #         exists_fpid_dict[record['fpid']] = 1
 
-                for x in fpid_list:
-                    if x not in exists_fpid_dict:
-                        need_to_add_fpid_list.append(x)
+            #     for x in fpid_list:
+            #         if x not in exists_fpid_dict:
+            #             need_to_add_fpid_list.append(x)
 
-                print 'need to add: %s' % oid, need_to_add_fpid_list
+            #     print 'need to add: %s' % oid, need_to_add_fpid_list
 
-                # for fpid in need_to_add_fpid_list:
-                #     mongo_db.fpid_record.insert({'oid': event_page_oid, 'fpid': fpid})
+            #     # for fpid in need_to_add_fpid_list:
+            #     #     mongo_db.fpid_record.insert({'oid': event_page_oid, 'fpid': fpid})
 
-                # count = len(need_to_add_fpid_list)
-                # if count > 0:
-                #     mongo_db.event_page.update({'_id': ObjectId(oid)}, {'$inc': {'weixin_share': count}})
+            #     # count = len(need_to_add_fpid_list)
+            #     # if count > 0:
+            #     #     mongo_db.event_page.update({'_id': ObjectId(oid)}, {'$inc': {'weixin_share': count}})
 
 
-            event_page_fpid_data = {}
+            # event_page_fpid_data = {}
 
 
 kafka.close()
