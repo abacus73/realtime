@@ -1,6 +1,6 @@
 #coding=utf-8
 import sys
-from helper import *
+from handler import *
 
 from kafka.client import KafkaClient
 from kafka.consumer import SimpleConsumer
