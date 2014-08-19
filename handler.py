@@ -148,7 +148,7 @@ class Handler():
 
         oid = result.group(1)
         event_page_oid = oid
-        
+
         ppid_result = re.search(ppid_regex, url)
         if not ppid_result: return
 
@@ -156,6 +156,9 @@ class Handler():
         ppid = ppid_decrypt(ppid)
 
         fpid = ppid[0:32]
+
+        print url, fpid
+        
         if fpid == INIT_PPID: return
 
         if event_page_oid not in event_page_fpid_data:
