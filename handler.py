@@ -131,7 +131,7 @@ class Handler():
             data_current = event_page_click_data[current_key]
 
             for event_page_id in data_current:
-                print event_page_id, data_current[event_page_id]
+                pass
                 # try:
                 #     mongo_db.event_page.update({'_id':ObjectId(event_page_id)}, {'$inc': {'click': data_current[event_page_id]}})
                 # except Exception, e:
