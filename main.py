@@ -41,22 +41,8 @@ for msg in consumer:
         url_handler.discovery_click_inspector(discovery_click_data, discovery_level_dict=discovery_dict)
 
         # # 类别列表点击
-        # if url.startswith('/api/1/discovery/list') and url.find('start=5') < 0:
+        url_handler.discovery_list_inspector(list_oid_click_data)
 
-        #     if date_key not in list_oid_click_data:
-        #         list_oid_click_data[date_key] = {}
-
-        #     result = re.search(list_category_oid_regex, url)
-        #     if not result: result = re.search(list_newest_oid_regex, url)
-        #     if result:
-        #         oid = result.group(1)
-
-        #         list_oid_daily_data = list_oid_click_data[date_key]
-
-        #         if oid not in list_oid_daily_data:
-        #             list_oid_daily_data[oid] = 0
-
-        #         list_oid_daily_data[oid] += 1
 
         # # 专题页点击
         # if url.startswith('/event/page/'):
@@ -100,27 +86,8 @@ for msg in consumer:
             discovery_click_data = {}
 
             # # 提交类别列表点击数
-            # print list_oid_click_data
-            # for current_key in list_oid_click_data:
-            #     list_oid_daily_data = list_oid_click_data[current_key]
-
-            #     current_time = parse_key_time(current_key)
-
-            #     for oid_key in list_oid_daily_data:
-            #         current_data = analysis_db.list_oid_json.find_one({'key': current_key, 'oid': oid_key})
-
-            #         if not current_data:
-            #             current_data = {
-            #                 'key': current_key,
-            #                 'time': current_time,
-            #                 'oid': oid_key,
-            #                 'count': list_oid_daily_data[oid_key]
-            #             }
-            #             # analysis_db.list_oid_json.insert(current_data)
-            #         else:
-            #             current_data['count'] += list_oid_daily_data[oid_key]
-            #             # analysis_db.list_oid_json.update({'key': current_key}, current_data)
-            # list_oid_click_data = {}
+            url_handler.discovery_list_handler(list_oid_click_data)
+            list_oid_click_data = {}
 
             # # 提交专题页点击数
             # print event_page_click_data

@@ -57,10 +57,49 @@ class Handler():
                 # analysis_db.clicks_json.update({'key': current_key}, current_data)
 
 
-    def discovery_list():
+    def discovery_list_inspector(self, list_oid_click_data):
         url = self.url
+        date_key = self.date_key
 
+        if url.startswith('/api/1/discovery/list') and url.find('start=5') < 0:
 
+            if date_key not in list_oid_click_data:
+                list_oid_click_data[date_key] = {}
+
+            result = re.search(list_category_oid_regex, url)
+            if not result: result = re.search(list_newest_oid_regex, url)
+            if result:
+                oid = result.group(1)
+
+                list_oid_daily_data = list_oid_click_data[date_key]
+
+                if oid not in list_oid_daily_data:
+                    list_oid_daily_data[oid] = 0
+
+                list_oid_daily_data[oid] += 1
+
+    def discovery_list_handler(self, list_oid_click_data):
+        print list_oid_click_data
+        
+        for current_key in list_oid_click_data:
+            list_oid_daily_data = list_oid_click_data[current_key]
+
+            current_time = parse_key_time(current_key)
+
+            for oid_key in list_oid_daily_data:
+                current_data = analysis_db.list_oid_json.find_one({'key': current_key, 'oid': oid_key})
+
+                if not current_data:
+                    current_data = {
+                        'key': current_key,
+                        'time': current_time,
+                        'oid': oid_key,
+                        'count': list_oid_daily_data[oid_key]
+                    }
+                    # analysis_db.list_oid_json.insert(current_data)
+                else:
+                    current_data['count'] += list_oid_daily_data[oid_key]
+                    # analysis_db.list_oid_json.update({'key': current_key}, current_data)
 
     def event_page_click():
         url = self.url
