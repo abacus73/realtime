@@ -39,6 +39,24 @@ class Handler():
                 if level >= 3:
                     daily_data['daily_essence_clicks'] += 1
 
+    def discovery_click_handler(self, discovery_click_data):
+        print discovery_click_data
+
+        for current_key in discovery_click_data:
+            current_data = analysis_db.clicks_json.find_one({'key': current_key})
+
+            if not current_data:
+                current_data = {
+                    'key': current_key
+                }
+                current_data.update(discovery_click_data[current_key])
+                # analysis_db.clicks_json.insert(current_data)
+            else:
+                current_data['daily_all_clicks'] += discovery_click_data[current_key]['daily_all_clicks']
+                current_data['daily_essence_clicks'] += discovery_click_data[current_key]['daily_essence_clicks']
+                # analysis_db.clicks_json.update({'key': current_key}, current_data)
+
+        discovery_click_data = {}
 
     def discovery_list():
         url = self.url
