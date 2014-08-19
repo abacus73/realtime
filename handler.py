@@ -149,8 +149,6 @@ class Handler():
         oid = result.group(1)
         event_page_oid = oid
 
-        print url
-
         ppid_result = re.search(ppid_regex, url)
         if not ppid_result: return
 

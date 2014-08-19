@@ -38,7 +38,7 @@ discovery_oid_regex = r'oid=discovery\.([a-z0-9]{24})'
 list_category_oid_regex = r'oid=(category\.[a-z0-9]{24})'
 list_newest_oid_regex = r'oid=(stype.newest)'
 event_page_id_regex = r'\/event\/page\/([a-z0-9]{24})'
-ppid_regex = r'ppid=([0-9]{64})'
+ppid_regex = r'ppid=([a-z0-9]{64})'
 
 
 # 时间处理相关
