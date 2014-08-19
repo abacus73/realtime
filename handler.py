@@ -56,7 +56,6 @@ class Handler():
                 current_data['daily_essence_clicks'] += discovery_click_data[current_key]['daily_essence_clicks']
                 # analysis_db.clicks_json.update({'key': current_key}, current_data)
 
-        discovery_click_data = {}
 
     def discovery_list():
         url = self.url

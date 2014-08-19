@@ -97,7 +97,7 @@ for msg in consumer:
             
             # 提交笔记点击数
             url_handler.discovery_click_handler(discovery_click_data)
-            print discovery_click_data
+            discovery_click_data = {}
 
             # # 提交类别列表点击数
             # print list_oid_click_data
