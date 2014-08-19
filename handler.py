@@ -10,34 +10,36 @@ class Handler():
         url = self.url
         date_key = self.date_key
 
-        if url.startswith('/api/1/discovery/item'):
-            if date_key not in discovery_click_data:
-                discovery_click_data[date_key] = {
-                    'daily_all_clicks': 0,
-                    'daily_essence_clicks': 0
-                }
+        if not url.startswith('/api/1/discovery/item'): return
 
-            daily_data = discovery_click_data[date_key]
-            # print url
-            result = re.search(discovery_oid_regex, url)
-            if result:
-                oid = result.group(1)
+        if date_key not in discovery_click_data:
+            discovery_click_data[date_key] = {
+                'daily_all_clicks': 0,
+                'daily_essence_clicks': 0
+            }
 
-                if oid not in discovery_level_dict:
-                    discovery = mongo_db.discovery.find_one({'_id':ObjectId(oid)}, {'level':1})
-                    if discovery:
-                        level = discovery.get('level', 1)
-                    else:
-                        level = 0
+        daily_data = discovery_click_data[date_key]
+        # print url
+        result = re.search(discovery_oid_regex, url)
+        if not result: return
 
-                    discovery_level_dict[oid] = level
-                else:
-                    level = discovery_level_dict[oid]
+        oid = result.group(1)
 
-                daily_data['daily_all_clicks'] += 1
+        if oid not in discovery_level_dict:
+            discovery = mongo_db.discovery.find_one({'_id':ObjectId(oid)}, {'level':1})
+            if discovery:
+                level = discovery.get('level', 1)
+            else:
+                level = 0
 
-                if level >= 3:
-                    daily_data['daily_essence_clicks'] += 1
+            discovery_level_dict[oid] = level
+        else:
+            level = discovery_level_dict[oid]
+
+        daily_data['daily_all_clicks'] += 1
+
+        if level >= 3:
+            daily_data['daily_essence_clicks'] += 1
 
     def discovery_click_handler(self, discovery_click_data):
         print discovery_click_data
@@ -61,22 +63,23 @@ class Handler():
         url = self.url
         date_key = self.date_key
 
-        if url.startswith('/api/1/discovery/list') and url.find('start=5') < 0:
+        if not url.startswith('/api/1/discovery/list') or url.find('start=5') >= 0: return
 
-            if date_key not in list_oid_click_data:
-                list_oid_click_data[date_key] = {}
+        if date_key not in list_oid_click_data:
+            list_oid_click_data[date_key] = {}
 
-            result = re.search(list_category_oid_regex, url)
-            if not result: result = re.search(list_newest_oid_regex, url)
-            if result:
-                oid = result.group(1)
+        result = re.search(list_category_oid_regex, url)
+        if not result: result = re.search(list_newest_oid_regex, url)
+        if not result: return
 
-                list_oid_daily_data = list_oid_click_data[date_key]
+        oid = result.group(1)
 
-                if oid not in list_oid_daily_data:
-                    list_oid_daily_data[oid] = 0
+        list_oid_daily_data = list_oid_click_data[date_key]
 
-                list_oid_daily_data[oid] += 1
+        if oid not in list_oid_daily_data:
+            list_oid_daily_data[oid] = 0
+
+        list_oid_daily_data[oid] += 1
 
     def discovery_list_handler(self, list_oid_click_data):
         print list_oid_click_data
@@ -105,19 +108,21 @@ class Handler():
         url = self.url
         date_key = self.date_key
 
-        if url.startswith('/event/page/'):
-            if date_key not in event_page_click_data:
-                event_page_click_data[date_key] = {}
+        if not url.startswith('/event/page/'): return
 
-            daily_data = event_page_click_data[date_key]
+        if date_key not in event_page_click_data:
+            event_page_click_data[date_key] = {}
 
-            result = re.search(event_page_id_regex, url)
-            if result:
-                oid = result.group(1)
-                if oid not in daily_data:
-                    daily_data[oid] = 1
-                else:
-                    daily_data[oid] += 1 
+        daily_data = event_page_click_data[date_key]
+
+        result = re.search(event_page_id_regex, url)
+        if not result: return
+
+        oid = result.group(1)
+        if oid not in daily_data:
+            daily_data[oid] = 1
+        else:
+            daily_data[oid] += 1 
 
     def event_page_click_handler(self, event_page_click_data):
         print event_page_click_data
@@ -136,27 +141,29 @@ class Handler():
         url = self.url
         date_key = self.date_key
 
-        if url.startswith('/event/page/'):
-            result = re.search(event_page_id_regex, url)
-            if result:
-                oid = result.group(1)
-                ppid_result = re.search(ppid_regex, url)
+        if not url.startswith('/event/page/'): return
 
-                if ppid_result:
-                    event_page_oid = oid
+        result = re.search(event_page_id_regex, url)
+        if not result: return
 
-                    ppid = ppid_result.group(1)
-                    ppid = ppid_decrypt(ppid)
+        oid = result.group(1)
+        event_page_oid = oid
+        
+        ppid_result = re.search(ppid_regex, url)
+        if not ppid_result: return
 
-                    fpid = ppid[0:32]
+        ppid = ppid_result.group(1)
+        ppid = ppid_decrypt(ppid)
 
-                    if fpid != INIT_PPID:
-                        if event_page_oid not in event_page_fpid_data:
-                            event_page_fpid_data[event_page_oid] = {}
+        fpid = ppid[0:32]
+        if fpid == INIT_PPID: return
 
-                        event_page_item_data = event_page_fpid_data[event_page_oid]
-                        if fpid not in event_page_item_data:
-                            event_page_item_data[fpid] = 1
+        if event_page_oid not in event_page_fpid_data:
+            event_page_fpid_data[event_page_oid] = {}
+
+        event_page_item_data = event_page_fpid_data[event_page_oid]
+        if fpid not in event_page_item_data:
+            event_page_item_data[fpid] = 1
 
     def event_page_weixin_share_handler(self, event_page_fpid_data):
         print event_page_fpid_data

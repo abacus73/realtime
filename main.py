@@ -58,15 +58,15 @@ for msg in consumer:
             url_handler.discovery_click_handler(discovery_click_data)
             discovery_click_data = {}
 
-            # # 提交类别列表点击数
+            # 提交类别列表点击数
             url_handler.discovery_list_handler(list_oid_click_data)
             list_oid_click_data = {}
 
-            # # 提交专题页点击数
+            # 提交专题页点击数
             url_handler.event_page_click_handler(event_page_click_data)
             event_page_click_data = {}
 
-            # # 提交专题页微信分享数
+            # 提交专题页微信分享数
             url_handler.event_page_weixin_share_handler(event_page_fpid_data)
             event_page_fpid_data = {}
 
