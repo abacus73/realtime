@@ -44,10 +44,10 @@ for msg in consumer:
         url_handler.discovery_list_inspector(list_oid_click_data)
 
         # 专题页点击
-        url_handler.event_page_click_inspector(event_page_click_data, event_page_fpid_data)
+        url_handler.event_page_click_inspector(event_page_click_data)
 
         # 专题页微信分享
-        url_handler.event_page_weixin_share_inspector(event_page_click_data, event_page_fpid_data)
+        url_handler.event_page_weixin_share_inspector(event_page_fpid_data)
 
 
         # 判断是否达到分页值，进行提交
