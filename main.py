@@ -1,32 +1,9 @@
 #coding=utf-8
 import sys
+from helper import *
+
 from kafka.client import KafkaClient
 from kafka.consumer import SimpleConsumer
-import re, datetime
-from pymongo import Connection
-from bson.objectid import ObjectId
-from ppid_encrypt import *
-
-mongo_db = Connection()['db_prod']
-analysis_db = Connection()['db_analysis_prod']
-
-def parse_time(time_str):
-    return datetime.datetime.strptime(time_str, '%d/%b/%Y:%H:%M:%S')
-
-def parse_key_time(time_str):
-    return datetime.datetime.strptime(time_str, '%Y-%m-%d')
-
-def format_time(_date):
-    return _date.strftime('%Y-%m-%d')
-
-
-time_url_regex = r'\[(.+)\s\+0800\]\s"GET\s(.+)\sHTTP'
-discovery_oid_regex = r'oid=discovery\.([a-z0-9]{24})'
-list_category_oid_regex = r'oid=(category\.[a-z0-9]{24})'
-list_newest_oid_regex = r'oid=(stype.newest)'
-event_page_id_regex = r'\/event\/page\/([a-z0-9]{24})'
-ppid_regex = r'ppid=([0-9]{64})'
-
 
 kafka = KafkaClient("10.160.9.106:9092")
 consumer = SimpleConsumer(kafka, "my-group", "test")
@@ -43,21 +20,8 @@ event_page_click_data = {}
 # 专题页fpid数据 
 event_page_fpid_data = {}
 
-
 # 初始化一些笔记的level
-d_current = datetime.datetime.now()
-discovery_dict = {}
-search_dict = {
-    'time': {
-        '$gte': d_current - datetime.timedelta(days=3),
-        '$lte': d_current
-    }
-}
-discoveries = mongo_db.discovery.find(search_dict, {'level':1})
-for discovery in discoveries:
-    level = discovery.get('level', 1)
-    discovery_dict[str(discovery['_id'])] = level
-
+discovery_dict = discovery_level_data_init()
 
 for msg in consumer:
     result = re.search(time_url_regex, str(msg))
