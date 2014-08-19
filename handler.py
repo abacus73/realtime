@@ -6,7 +6,7 @@ class Handler():
         self.url = url
         self.date_key = date_key
 
-    def discovery_click_inspector(discovery_click_data, discovery_level_dict={}):
+    def discovery_click_inspector(self, discovery_click_data, discovery_level_dict={}):
         url = self.url
         date_key = self.date_key
 
