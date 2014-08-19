@@ -101,10 +101,92 @@ class Handler():
                     current_data['count'] += list_oid_daily_data[oid_key]
                     # analysis_db.list_oid_json.update({'key': current_key}, current_data)
 
-    def event_page_click():
+    def event_page_click_inspector(self, event_page_click_data):
         url = self.url
+        date_key = self.date_key
 
+        if url.startswith('/event/page/'):
+            if date_key not in event_page_click_data:
+                event_page_click_data[date_key] = {}
 
+            daily_data = event_page_click_data[date_key]
+
+            result = re.search(event_page_id_regex, url)
+            if result:
+                oid = result.group(1)
+                if oid not in daily_data:
+                    daily_data[oid] = 1
+                else:
+                    daily_data[oid] += 1 
+
+    def event_page_click_handler(self, event_page_click_data):
+        print event_page_click_data
+
+        for current_key in event_page_click_data:
+            data_current = event_page_click_data[current_key]
+
+            for event_page_id in data_current:
+                print event_page_id, data_current[event_page_id]
+                # try:
+                #     mongo_db.event_page.update({'_id':ObjectId(event_page_id)}, {'$inc': {'click': data_current[event_page_id]}})
+                # except Exception, e:
+                #     print e
+
+    def event_page_weixin_share_inspector(self, event_page_fpid_data):
+        url = self.url
+        date_key = self.date_key
+
+        if url.startswith('/event/page/'):
+            result = re.search(event_page_id_regex, url)
+            if result:
+                oid = result.group(1)
+                ppid_result = re.search(ppid_regex, url)
+
+                if ppid_result:
+                    event_page_oid = oid
+
+                    ppid = ppid_result.group(1)
+                    ppid = ppid_decrypt(ppid)
+
+                    fpid = ppid[0:32]
+
+                    if fpid != INIT_PPID:
+                        if event_page_oid not in event_page_fpid_data:
+                            event_page_fpid_data[event_page_oid] = {}
+
+                        event_page_item_data = event_page_fpid_data[event_page_oid]
+                        if fpid not in event_page_item_data:
+                            event_page_item_data[fpid] = 1
+
+    def event_page_weixin_share_handler(self, event_page_fpid_data):
+        print event_page_fpid_data
+        
+        for oid in event_page_fpid_data:
+            temp_fpid_dict = event_page_fpid_data[oid]
+            need_to_add_fpid_list = []
+
+            fpid_list = list(temp_fpid_dict)
+
+            event_page_oid = 'event_page.%s' % oid
+
+            exists_fpid_records = mongo_db.fpid_record.find({'oid': event_page_oid, 'fpid': {'$in':fpid_list }}, {'fpid': 1})
+            exists_fpid_dict = {}
+
+            for record in exists_fpid_records:
+                exists_fpid_dict[record['fpid']] = 1
+
+            for x in fpid_list:
+                if x not in exists_fpid_dict:
+                    need_to_add_fpid_list.append(x)
+
+            print 'need to add: %s' % oid, need_to_add_fpid_list
+
+            # for fpid in need_to_add_fpid_list:
+            #     mongo_db.fpid_record.insert({'oid': event_page_oid, 'fpid': fpid})
+
+            # count = len(need_to_add_fpid_list)
+            # if count > 0:
+            #     mongo_db.event_page.update({'_id': ObjectId(oid)}, {'$inc': {'weixin_share': count}})
 
 def test():
     pass
