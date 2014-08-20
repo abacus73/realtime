@@ -21,10 +21,13 @@ event_page_click_data = {}
 event_page_fpid_data = {}
 
 # 初始化一些笔记的level
-discovery_dict = discovery_level_data_init()
+# discovery_dict = discovery_level_data_init()
+discovery_dict = {}
 
 for msg in consumer:
     result = re.search(time_url_regex, str(msg))
+    print result
+    
     if result:
         num += 1
 
