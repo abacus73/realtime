@@ -10,9 +10,16 @@ from pyDes import *
 from binascii import unhexlify as unhex
 from binascii import hexlify as hex
 
+# 10.168.35.84 dev
+# 10.160.9.106 prod
+
 # 数据库相关
-mongo_db = Connection()['db_prod']
-analysis_db = Connection()['db_analysis_prod']
+prod_master = Connection(host='10.160.9.106', port=27017)['db_prod']
+prod_slave = Connection(host='localhost', port=27017)['db_prod']
+
+# analysis_prod_master = Connection(host='10.160.9.106', port=27017)['db_analysis_prod']
+
+analysis_db = Connection(host='localhost', port=29017)['analysis_db']
 
 def discovery_level_data_init():
     discovery_dict = {}
@@ -25,7 +32,7 @@ def discovery_level_data_init():
             '$lte': d_current
         }
     }
-    discoveries = mongo_db.discovery.find(search_dict, {'level':1})
+    discoveries = prod_slave.discovery.find(search_dict, {'level':1})
     for discovery in discoveries:
         level = discovery.get('level', 1)
         discovery_dict[str(discovery['_id'])] = level
