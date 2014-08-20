@@ -113,7 +113,7 @@ class Handler():
                 count = event_page_daily_data[event_page_id]
                 event_page_oid_key = 'event_page.%s' % event_page_id
 
-                current_data = analysis_db.list_oid_json.update({'date': current_date_key, 'oid': event_page_oid_key}, {'$inc': {'count': count}}, upsert=True)
+                current_data = analysis_db.event_page_clicks.update({'date': current_date_key, 'oid': event_page_oid_key}, {'$inc': {'count': count}}, upsert=True)
 
                 try:
                     prod_master.event_page.update({'_id':ObjectId(event_page_id)}, {'$inc': {'click': count}})

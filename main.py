@@ -42,10 +42,10 @@ for msg in consumer:
         # url_handler.discovery_click_inspector(discovery_click_data, discovery_level_dict=discovery_dict)
 
         # 类别列表点击
-        url_handler.discovery_list_inspector(list_oid_click_data)
+        # url_handler.discovery_list_inspector(list_oid_click_data)
 
         # # 专题页点击
-        # url_handler.event_page_click_inspector(event_page_click_data)
+        url_handler.event_page_click_inspector(event_page_click_data)
 
         # # 专题页微信分享
         # url_handler.event_page_weixin_share_inspector(event_page_fpid_data)
@@ -60,12 +60,12 @@ for msg in consumer:
             # discovery_click_data = {}
 
             # 提交类别列表点击数
-            url_handler.discovery_list_handler(list_oid_click_data)
-            list_oid_click_data = {}
+            # url_handler.discovery_list_handler(list_oid_click_data)
+            # list_oid_click_data = {}
 
             # # 提交专题页点击数
-            # url_handler.event_page_click_handler(event_page_click_data)
-            # event_page_click_data = {}
+            url_handler.event_page_click_handler(event_page_click_data)
+            event_page_click_data = {}
 
             # # 提交专题页微信分享数
             # url_handler.event_page_weixin_share_handler(event_page_fpid_data)
