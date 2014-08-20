@@ -26,7 +26,7 @@ class Handler():
         oid = result.group(1)
 
         if oid not in discovery_level_dict:
-            discovery = mongo_db.discovery.find_one({'_id':ObjectId(oid)}, {'level':1})
+            discovery = prod_slave.discovery.find_one({'_id':ObjectId(oid)}, {'level':1})
             if discovery:
                 level = discovery.get('level', 1)
             else:
@@ -44,20 +44,12 @@ class Handler():
     def discovery_click_handler(self, discovery_click_data):
         print discovery_click_data
 
-        for current_key in discovery_click_data:
-            current_data = analysis_db.clicks_json.find_one({'key': current_key})
+        for current_date_key in discovery_click_data:
+            daily_data = discovery_click_data[current_date_key]
 
-            if not current_data:
-                current_data = {
-                    'key': current_key
-                }
-                current_data.update(discovery_click_data[current_key])
-                # analysis_db.clicks_json.insert(current_data)
-            else:
-                current_data['daily_all_clicks'] += discovery_click_data[current_key]['daily_all_clicks']
-                current_data['daily_essence_clicks'] += discovery_click_data[current_key]['daily_essence_clicks']
-                # analysis_db.clicks_json.update({'key': current_key}, current_data)
-
+            for data_type_oid in daily_data:
+                count = daily_data[data_type_oid]
+                analysis_db.discovery_clicks.update({'date': current_date_key, 'oid': data_type_oid}, {'$inc': {'count': count}}, upsert=True)
 
     def discovery_list_inspector(self, list_oid_click_data):
         url = self.url
@@ -84,25 +76,12 @@ class Handler():
     def discovery_list_handler(self, list_oid_click_data):
         print list_oid_click_data
         
-        for current_key in list_oid_click_data:
-            list_oid_daily_data = list_oid_click_data[current_key]
-
-            current_time = parse_key_time(current_key)
+        for current_date_key in list_oid_click_data:
+            list_oid_daily_data = list_oid_click_data[current_date_key]
 
             for oid_key in list_oid_daily_data:
-                current_data = analysis_db.list_oid_json.find_one({'key': current_key, 'oid': oid_key})
-
-                if not current_data:
-                    current_data = {
-                        'key': current_key,
-                        'time': current_time,
-                        'oid': oid_key,
-                        'count': list_oid_daily_data[oid_key]
-                    }
-                    # analysis_db.list_oid_json.insert(current_data)
-                else:
-                    current_data['count'] += list_oid_daily_data[oid_key]
-                    # analysis_db.list_oid_json.update({'key': current_key}, current_data)
+                count = list_oid_daily_data[oid_key]
+                current_data = analysis_db.list_oid_json.update({'date': current_date_key, 'oid': oid_key}, {'$inc': {'count': count}}, upsert=True)
 
     def event_page_click_inspector(self, event_page_click_data):
         url = self.url
@@ -127,15 +106,19 @@ class Handler():
     def event_page_click_handler(self, event_page_click_data):
         print event_page_click_data
 
-        for current_key in event_page_click_data:
-            data_current = event_page_click_data[current_key]
+        for current_date_key in event_page_click_data:
+            event_page_daily_data = event_page_click_data[current_date_key]
 
-            for event_page_id in data_current:
-                pass
-                # try:
-                #     mongo_db.event_page.update({'_id':ObjectId(event_page_id)}, {'$inc': {'click': data_current[event_page_id]}})
-                # except Exception, e:
-                #     print e
+            for event_page_id in event_page_daily_data:
+                count = event_page_daily_data[event_page_id]
+                event_page_oid_key = 'event_page.%s' % event_page_id
+
+                current_data = analysis_db.list_oid_json.update({'date': current_date_key, 'oid': event_page_oid_key}, {'$inc': {'count': count}}, upsert=True)
+
+                try:
+                    prod_master.event_page.update({'_id':ObjectId(event_page_id)}, {'$inc': {'click': count}})
+                except Exception, e:
+                    print e
 
     def event_page_weixin_share_inspector(self, event_page_fpid_data):
         url = self.url
