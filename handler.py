@@ -81,7 +81,7 @@ class Handler():
 
             for oid_key in list_oid_daily_data:
                 count = list_oid_daily_data[oid_key]
-                current_data = analysis_db.list_oid_json.update({'date': current_date_key, 'oid': oid_key}, {'$inc': {'count': count}}, upsert=True)
+                current_data = analysis_db.list_oid_clicks.update({'date': current_date_key, 'oid': oid_key}, {'$inc': {'count': count}}, upsert=True)
 
     def event_page_click_inspector(self, event_page_click_data):
         url = self.url
