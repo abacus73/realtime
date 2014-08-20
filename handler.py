@@ -152,6 +152,7 @@ class Handler():
 
     def event_page_weixin_share_handler(self, event_page_fpid_data):
         print event_page_fpid_data
+        _num = 0
         
         for oid in event_page_fpid_data:
             temp_fpid_dict = event_page_fpid_data[oid]
@@ -161,7 +162,7 @@ class Handler():
 
             event_page_oid = 'event_page.%s' % oid
 
-            exists_fpid_records = mongo_db.fpid_record.find({'oid': event_page_oid, 'fpid': {'$in':fpid_list }}, {'fpid': 1})
+            exists_fpid_records = analysis_db.event_share_record.find({'_type':'weixin', 'oid': event_page_oid, 'fpid': {'$in':fpid_list }}, {'fpid': 1})
             exists_fpid_dict = {}
 
             for record in exists_fpid_records:
@@ -171,14 +172,23 @@ class Handler():
                 if x not in exists_fpid_dict:
                     need_to_add_fpid_list.append(x)
 
-            print 'need to add: %s' % oid, need_to_add_fpid_list
+            count = len(need_to_add_fpid_list)
+            print 'need to add: %s' % oid, count
 
-            # for fpid in need_to_add_fpid_list:
-            #     mongo_db.fpid_record.insert({'oid': event_page_oid, 'fpid': fpid})
+            for fpid in need_to_add_fpid_list:
+                analysis_db.event_share_record.insert({'_type':'weixin', 'oid': event_page_oid, 'fpid': fpid})
 
-            # count = len(need_to_add_fpid_list)
-            # if count > 0:
-            #     mongo_db.event_page.update({'_id': ObjectId(oid)}, {'$inc': {'weixin_share': count}})
+                _num += 1
+
+                if _num == 100:
+                    time.sleep(0.1)
+                    _num = 0
+
+            if count > 0:
+                try:
+                    prod_master.event_page.update({'_id': ObjectId(oid)}, {'$inc': {'weixin_share': count}})
+                except Exception, e:
+                    print e
 
 def test():
     pass

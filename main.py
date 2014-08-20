@@ -48,7 +48,7 @@ for msg in consumer:
         url_handler.event_page_click_inspector(event_page_click_data)
 
         # # 专题页微信分享
-        # url_handler.event_page_weixin_share_inspector(event_page_fpid_data)
+        url_handler.event_page_weixin_share_inspector(event_page_fpid_data)
 
 
         # 判断是否达到分页值，进行提交
@@ -68,8 +68,8 @@ for msg in consumer:
             event_page_click_data = {}
 
             # # 提交专题页微信分享数
-            # url_handler.event_page_weixin_share_handler(event_page_fpid_data)
-            # event_page_fpid_data = {}
+            url_handler.event_page_weixin_share_handler(event_page_fpid_data)
+            event_page_fpid_data = {}
 
 
 kafka.close()
