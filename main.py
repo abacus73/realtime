@@ -9,6 +9,7 @@ kafka = KafkaClient("10.160.9.106:9092")
 consumer = SimpleConsumer(kafka, "my-group", "test")
 
 slice_number = 1000
+
 num = 0
 
 # 笔记点击数据
@@ -24,6 +25,7 @@ event_page_fpid_data = {}
 discovery_dict = discovery_level_data_init()
 
 for msg in consumer:
+
     result = re.search(time_url_regex, str(msg))
     
     if result:
@@ -54,7 +56,7 @@ for msg in consumer:
         # 判断是否达到分页值，进行提交
         if num == slice_number:
             num = 0
-            
+            print datetime.datetime.now(), log_time, 'handled to %d' % msg.offset
             # 提交笔记点击数
             url_handler.discovery_click_handler(discovery_click_data)
             discovery_click_data = {}
@@ -71,6 +73,7 @@ for msg in consumer:
             url_handler.event_page_weixin_share_handler(event_page_fpid_data)
             event_page_fpid_data = {}
 
+            print datetime.datetime.now(), 'handled succeed'
 
 kafka.close()
 

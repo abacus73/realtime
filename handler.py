@@ -42,7 +42,7 @@ class Handler():
             daily_data['daily_essence_clicks'] += 1
 
     def discovery_click_handler(self, discovery_click_data):
-        print discovery_click_data
+        # print discovery_click_data
 
         for current_date_key in discovery_click_data:
             daily_data = discovery_click_data[current_date_key]
@@ -74,7 +74,7 @@ class Handler():
         list_oid_daily_data[oid] += 1
 
     def discovery_list_handler(self, list_oid_click_data):
-        print list_oid_click_data
+        # print list_oid_click_data
         
         for current_date_key in list_oid_click_data:
             list_oid_daily_data = list_oid_click_data[current_date_key]
@@ -104,7 +104,7 @@ class Handler():
             daily_data[oid] += 1 
 
     def event_page_click_handler(self, event_page_click_data):
-        print event_page_click_data
+        # print event_page_click_data
 
         for current_date_key in event_page_click_data:
             event_page_daily_data = event_page_click_data[current_date_key]
@@ -151,7 +151,7 @@ class Handler():
             event_page_item_data[fpid] = 1
 
     def event_page_weixin_share_handler(self, event_page_fpid_data):
-        print event_page_fpid_data
+        # print event_page_fpid_data
         _num = 0
         
         for oid in event_page_fpid_data:
