@@ -74,6 +74,7 @@ for msg in consumer:
             event_page_fpid_data = {}
 
             print datetime.datetime.now(), 'handled succeed'
+            print 
 
 kafka.close()
 
