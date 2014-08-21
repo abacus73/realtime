@@ -173,7 +173,7 @@ class Handler():
                     need_to_add_fpid_list.append(x)
 
             count = len(need_to_add_fpid_list)
-            print 'need to add: %s' % oid, count
+            # print 'need to add: %s' % oid, count
 
             for fpid in need_to_add_fpid_list:
                 analysis_db.event_share_record.insert({'_type':'weixin', 'oid': event_page_oid, 'fpid': fpid})

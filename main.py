@@ -56,7 +56,7 @@ for msg in consumer:
         # 判断是否达到分页值，进行提交
         if num == slice_number:
             num = 0
-            print datetime.datetime.now(), log_time, 'handled to %d' % msg.offset
+            print datetime.datetime.now(), 'log_time:', log_time, 'handled to %d' % msg.offset
             # 提交笔记点击数
             url_handler.discovery_click_handler(discovery_click_data)
             discovery_click_data = {}
