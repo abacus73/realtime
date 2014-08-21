@@ -8,7 +8,7 @@ from kafka.consumer import SimpleConsumer
 kafka = KafkaClient("10.160.9.106:9092")
 consumer = SimpleConsumer(kafka, "my-group", "nginx-access")
 
-slice_number = 10000
+slice_number = 1000
 
 num = 0
 
