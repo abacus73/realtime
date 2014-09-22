@@ -136,7 +136,11 @@ class Handler():
         if not ppid_result: return
 
         ppid = ppid_result.group(1)
-        ppid = ppid_decrypt(ppid)
+        try:
+            ppid = ppid_decrypt(ppid)
+        except:
+            print "ppid format error"
+            return
 
         fpid = ppid[0:32]
 
